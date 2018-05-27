@@ -1,53 +1,54 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script>
- function myFunction() {
-   var word = document.getElementById("input_text").value;
-   var length = document.getElementById("input_length").value;
-   if(length && !isNaN(length) && length.length!=0){
-    console.log('yo', length, isNaN(length), !isNaN(length));
-   var type = document.querySelector('input[name="type"]:checked').value;
-   }
-   else {
-     type = null;
-     length = null;
-   }
-   console.log('type is', type);
-   $.ajax({
-     type: 'post',
-     data: { 
-        'word': word, 
-        'length': length,
-        'type': type
-      },
-     url: 'http://127.0.0.1:3000/find_anagram', //node.js server is running
-     success: function(data) {
-       alert("success");
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function myFunction() {
+            var word = document.getElementById("input_text").value;
+            var length = document.getElementById("input_length").value;
+            if (length && !isNaN(length) && length.length != 0) {
+                var type = document.querySelector('input[name="type"]:checked').value;
+            } else {
+                type = null;
+                length = null;
+            }
+            $.ajax({
+                type: 'post',
+                data: {
+                    'word': word,
+                    'length': length,
+                    'type': type
+                },
+                url: 'http://127.0.0.1:3000/find_anagram', //node.js server is running
+                success: function(data) {
+                    console.log(data);
+                    alert(data);
 
-     }
-   });
- }
+                }
+            });
+        }
 
 
-$(document).ready(function(){
-  $("#div1").load("public/demo_test.html #words li");
-});
-</script>
-  <title></title>
+        $(document).ready(function() {
+            $("#div1").load("public/demo_test.html #words li");
+        });
+    </script>
+    <title></title>
 </head>
+
 <body>
-<h2>Current Dictionary</h2>
-<div id="div1"></div>
-<form>
-<input type="text" name="input_text" id = "input_text">
-<input type="text" name="input_length" id = "input_length">
-<input type="radio" name="type" value="e" checked> equal<br>
-  <input type="radio" name="type" value="lte"> less than or equal<br>
-  <input type="radio" name="type" value="lt"> less than
-<input type="button" value="search" class="fil_search" onclick="myFunction()"/>
-</form>
+    <h2>Current Dictionary</h2>
+    <div id="div1"></div>
+    <form>
+        <input type="text" name="input_text" id="input_text">
+        <input type="text" name="input_length" id="input_length">
+        <input type="radio" name="type" value="e" checked> equal<br>
+        <input type="radio" name="type" value="lte"> less than or equal<br>
+        <input type="radio" name="type" value="lt"> less than
+        <input type="button" value="search" class="fil_search" onclick="myFunction()" />
+    </form>
 
 </body>
+
 </html>
