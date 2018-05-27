@@ -12,7 +12,12 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'))
 app.post('/find_anagram', function (req, res){
 	var word = req.body.word;
 	var length = req.body.length;
-  console.log(word , length);
+
+	var words_dict = require('fs').readFileSync('public/demo_test.html').toString().match(/<li>.+<\/li>/gm);
+	var words_dict = words_dict.map(function(word) {
+  return word.replace('<li>' , '').replace('<\/li>' , '');
+});
+  console.log(word , length, "my", words_dict);
   if(length){
   	console.log('length is', length);
   }
