@@ -6,12 +6,21 @@
  function myFunction() {
    var word = document.getElementById("input_text").value;
    var length = document.getElementById("input_length").value;
-   console.log('word is', word);
+   if(length && !isNaN(length) && length.length!=0){
+    console.log('yo', length, isNaN(length), !isNaN(length));
+   var type = document.querySelector('input[name="type"]:checked').value;
+   }
+   else {
+     type = null;
+     length = null;
+   }
+   console.log('type is', type);
    $.ajax({
      type: 'post',
      data: { 
         'word': word, 
-        'length': length
+        'length': length,
+        'type': type
       },
      url: 'http://127.0.0.1:3000/find_anagram', //node.js server is running
      success: function(data) {
@@ -34,6 +43,9 @@ $(document).ready(function(){
 <form>
 <input type="text" name="input_text" id = "input_text">
 <input type="text" name="input_length" id = "input_length">
+<input type="radio" name="type" value="e" checked> equal<br>
+  <input type="radio" name="type" value="lte"> less than or equal<br>
+  <input type="radio" name="type" value="lt"> less than
 <input type="button" value="search" class="fil_search" onclick="myFunction()"/>
 </form>
 
