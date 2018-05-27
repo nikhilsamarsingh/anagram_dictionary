@@ -90,55 +90,68 @@ async function convert_to_tree(sorted_dict) {
 }
 
 
-async function traverse_tree_json(tree_dict, sorted_word){
-  console.log('iteration',  sorted_word);
-  if(!sorted_word || sorted_word.length==0){
-    return "0";
-  }
-  if(sorted_word.length == 1){
-    console.log('sorted_word', sorted_word, Array.isArray(tree_dict[sorted_word]));
-    if(Array.isArray(tree_dict[sorted_word])){
-            return tree_dict[sorted_word];
-        }
-    else
+async function traverse_tree_json(tree_dict, sorted_word) {
+    if (!sorted_word || sorted_word.length == 0) {
         return "0";
-  }
-	for(var i = 0, len = sorted_word.length -1; i<len;  i++){
-		var char = sorted_word[i];
-		console.log('first letter = ', char, sorted_word);
-		for(var key in tree_dict){
-            console.log('tree dick k liyes', key,  "yp", tree_dict[key], key <= char);
-			if(key <= char){
-				if(key == char){
-				sorted_word = sorted_word.slice(1, );
-	      if(Array.isArray(tree_dict[key])){
-	      	return tree_dict[key];
-	      }
-	      else{
-	      	console.log('key', key, tree_dict[key]);
-	      return traverse_tree_json(tree_dict[key], sorted_word);
-
-	      }
-	    }
-	    else{
-	    	console.log('do nothing');
-
-
-	    }
-	  }
-    else{
-    	console.log('cant find');
-    	return "0";
-    	break;
     }
+    if (sorted_word.length == 1) {
+        if (Array.isArray(tree_dict[sorted_word])) {
+            return tree_dict[sorted_word];
+        } else
+            return "0";
     }
+    for (var i = 0, len = sorted_word.length - 1; i < len; i++) {
+        var char = sorted_word[i];
+        for (var key in tree_dict) {
+            if (key <= char) {
+                if (key == char) {
+                    sorted_word = sorted_word.slice(1, );
+                    if (Array.isArray(tree_dict[key])) {
+                        return tree_dict[key];
+                    } else {
+                        return traverse_tree_json(tree_dict[key], sorted_word);
 
-	}
+                    }
+                } else {
+                    console.log('do nothing');
+
+
+                }
+            } else {
+                return "0";
+            }
+        }
+
+    }
 
 }
 
+function combinations(chars) {
+    var result = [];
+    var f = function(prefix, chars) {
+        for (var i = 0; i < chars.length; i++) {
+            result.push(prefix + chars[i]);
+            f(prefix + chars[i], chars.slice(i + 1));
+        }
+    }
+    f('', chars);
+    return result;
+}
 
-
+function size_check(type, length) {
+    if (type == "e")
+        return function(element) {
+            return element.length == length;
+        }
+    else if (type == "lt")
+        return function(element) {
+            return element.length < length;
+        }
+    else if (type == "lte")
+        return function(element) {
+            return element.length <= length;
+        }
+}
 
 app.post('/find_anagram', async function(req, res) {
     var word = req.body.word;
@@ -177,8 +190,22 @@ app.post('/find_anagram', async function(req, res) {
     sorted_dict = await sort_dict(words_dict);
     tree_dict = await convert_to_tree(sorted_dict);
     var tree_dict = JSON.parse(tree_dict);
-    console.log('tree_dict', tree_dict);
-    var search = await traverse_tree_json(tree_dict, sorted_word);
+    sorted_word_combinations = await combinations(sorted_word);
+    if (type && length)
+        sorted_word_combinations = sorted_word_combinations.filter(size_check(type, length));
+    console.log('sorted_word_combinations', sorted_word_combinations);
+    var search = [];
+    for (var i = 0, len = sorted_word_combinations.length - 1; i < len; i++) {
+        var search_element = await traverse_tree_json(tree_dict, sorted_word_combinations[i]);
+        if (search_element == "0") {
+            console.log('ignore');
+        } else {
+
+            Array.prototype.push.apply(search, search_element);
+        }
+
+    }
+    //search = await traverse_tree_json(tree_dict, sorted_word);
     res.send(search);
 });
 
