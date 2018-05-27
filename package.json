@@ -1,0 +1,29 @@
+{
+  "name": "anagram_dictionary",
+  "version": "1.0.0",
+  "description": "For e.g. if input is gdo, api should return words: dog, god  as output.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "async": "^2.6.0",
+    "body-parser": "~1.13.2",
+    "debug": "~2.2.0",
+    "del": "^2.2.2",
+    "delete": "^0.3.2",
+    "express": "~4.13.1",
+    "express-request-id": "^1.1.1",
+    "pm2": "^2.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikhilsamarsingh/anagram_dictionary.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikhilsamarsingh/anagram_dictionary/issues"
+  },
+  "homepage": "https://github.com/nikhilsamarsingh/anagram_dictionary#readme"
+}
