@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({
 app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'))
 
 
+// This function simply converts arrany like [bat, cat, act] => [{act:[act, cat], abt: [bat]   }]
 async function sort_dict(words_dict) {
     sorted_dict = {};
     new_sorted_dict = {};
@@ -31,7 +32,6 @@ async function sort_dict(words_dict) {
     len = keys.length;
     for (i = 0; i < len; i++) {
         k = keys[i];
-        console.log('k', k);
         new_sorted_dict[k] = {}
         new_sorted_dict[k] = sorted_dict[k]
 
@@ -40,6 +40,8 @@ async function sort_dict(words_dict) {
 
 }
 
+// This function adds a child to tree_dict, if the key is not a single aphabet then we need to call recurslively
+// till we get an object like, {'a':{'c' :{'p':[cap], 't': [cat, act]}, ...}}
 function add_child(branch, key, value) {
     key = key.slice(1, );
     var new_key = key[0]
@@ -56,6 +58,8 @@ function add_child(branch, key, value) {
     }
 }
 
+
+// This function will find whenre to put the next child in the tree_dict, and then we call add_child
 function find_place_in_tree_dict(branch, key, value) {
     if (typeof branch !== 'undefined' && branch !== null) {
         add_child(branch, key, value);
@@ -94,13 +98,11 @@ async function traverse_tree_json(tree_dict, sorted_word) {
     if (!sorted_word || sorted_word.length == 0) {
         return "0";
     }
-    if (sorted_word.length == 1) {
-        if (Array.isArray(tree_dict[sorted_word])) {
-            return tree_dict[sorted_word];
-        } else
-            return "0";
-    }
-    for (var i = 0, len = sorted_word.length - 1; i < len; i++) {
+    
+    // starting from user's input, in sorted order, we match each element with the tree' nodes,
+    // if the nodes do exist in the same order, and lead to an array, then we return the array
+    // else we simply return "0"
+    for (var i = 0, len = sorted_word.length ; i < len; i++) {
         var char = sorted_word[i];
         for (var key in tree_dict) {
             if (key <= char) {
@@ -113,7 +115,7 @@ async function traverse_tree_json(tree_dict, sorted_word) {
 
                     }
                 } else {
-                    console.log('do nothing');
+                    //console.log('do nothing');
 
 
                 }
@@ -126,6 +128,7 @@ async function traverse_tree_json(tree_dict, sorted_word) {
 
 }
 
+// simple algo to calculate all combinations of a given string
 function combinations(chars) {
     var result = [];
     var f = function(prefix, chars) {
@@ -138,6 +141,9 @@ function combinations(chars) {
     return result;
 }
 
+// trimming the array that contains combinations of user given string, and will return a function
+// The returned function will be used as a filter function to filter the array acording to users' given 
+// length and type
 function size_check(type, length) {
     if (type == "e")
         return function(element) {
@@ -157,8 +163,11 @@ app.post('/find_anagram', async function(req, res) {
     var word = req.body.word;
     var length = req.body.length;
     var type = req.body.type;
+
+    //Fist we sort the inpur string alphabetically, so if input is act or cat, sorted_word will be act
     var sorted_word = word.toLowerCase().split("").sort().toString().replace(/,/g, '');
     var words_dict = require('fs').readFileSync('public/demo_test.html').toString().match(/<li>.+<\/li>/gm);
+    //words_dict contains list of words from our test dictionary, based on the length and type input by the user
     words_dict = words_dict.map(function(word) {
         if (type) {
             if (type == "e") {
@@ -188,27 +197,30 @@ app.post('/find_anagram', async function(req, res) {
     });
     words_dict = words_dict.sort()
     sorted_dict = await sort_dict(words_dict);
+    // suppose if words_dict was [act, cat ], then sorted_dict will be {act : [act, cat], ....}
+
+    // so soted_dict has sorted_word : word_dict as key pair values
     tree_dict = await convert_to_tree(sorted_dict);
+
+    // finally tree_dict will convert the sorted_dict into a dfs tree, which we will traverse
+    //eg, {"a":{"b":{"t":["bat"]},"c":{"d":{"n":{"y":["candy"]}},"p":["cap"],"t":["act","cat"]},"d":{"h":{"n":["hand"]}},"e":{"l":{"p":{"p":["apple"]}},"p":{"p":{"r":["paper"]}}}},"d":{"g":{"o":["dog","god"]}},"f":{"g":{"o":["fog"]}},"h":{"i":{"s":{"t":["hits","this"]}}}}
     var tree_dict = JSON.parse(tree_dict);
+
+    // gettting all combinations of the input string base on length and type
     sorted_word_combinations = await combinations(sorted_word);
     if (type && length)
         sorted_word_combinations = sorted_word_combinations.filter(size_check(type, length));
     var search = [];
-    if(sorted_word_combinations.length == 1){
-        var search_element = await traverse_tree_json(tree_dict, sorted_word_combinations[0]);
-        if (search_element == "0") {
-            res.send([]);
-        } else {
-
-            res.send(search_element);
-        }
 
 
-    }
-    for (var i = 0, len = sorted_word_combinations.length - 1; i < len; i++) {
+    // once we have the tree of the dictionary as well as combination of inputs, we can traverse the tree_dict for each string combination possible
+    // and send the result
+
+    for (var i = 0, len = sorted_word_combinations.length ; i < len; i++) {
         var search_element = await traverse_tree_json(tree_dict, sorted_word_combinations[i]);
+        console.log('search_element', search_element, sorted_word_combinations[i]);
         if (search_element == "0") {
-            console.log('ignore');
+            //console.log('do nothing');
         } else {
 
             Array.prototype.push.apply(search, search_element);
@@ -217,6 +229,7 @@ app.post('/find_anagram', async function(req, res) {
     }
     //search = await traverse_tree_json(tree_dict, sorted_word);
     search = search.filter((v, i, a) => a.indexOf(v) === i); 
+    console.log('search', search);
     res.send(search);
 });
 

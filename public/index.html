@@ -5,14 +5,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         function myFunction() {
+            // Getting input from text boxes and radio buttons
             var word = document.getElementById("input_text").value;
             var length = document.getElementById("input_length").value;
-            if (length && !isNaN(length) && length.length != 0) {
-                var type = document.querySelector('input[name="type"]:checked').value;
-            } else {
-                type = null;
-                length = null;
+            var letters = /^[A-Za-z]+$/;
+            if(word.match(letters)){
+              if (length && !isNaN(length) && length.length != 0) {
+                  var type = document.querySelector('input[name="type"]:checked').value;
+              } else {
+                  alert("length should be a number");
+                  type = null;
+                  length = null;
+              }
             }
+            else{
+              alert("input string should only have alphabets");
+            }
+            // sending ajax req
             $.ajax({
                 type: 'post',
                 data: {
@@ -25,7 +34,7 @@
                     //var data_json = JSON.parse(data);
                     console.log(data);
                     
-                    alert(data);
+                    document.getElementById("div2").innerHTML = data;
 
                 }
             });
@@ -50,6 +59,7 @@
         <input type="radio" name="type" value="lt"> less than
         <input type="button" value="search" class="fil_search" onclick="myFunction()" />
     </form>
+    <div id="div2"></div>
 
 </body>
 
