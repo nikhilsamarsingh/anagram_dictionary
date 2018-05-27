@@ -157,7 +157,6 @@ app.post('/find_anagram', async function(req, res) {
     var word = req.body.word;
     var length = req.body.length;
     var type = req.body.type;
-    console.log(req.body);
     var sorted_word = word.toLowerCase().split("").sort().toString().replace(/,/g, '');
     var words_dict = require('fs').readFileSync('public/demo_test.html').toString().match(/<li>.+<\/li>/gm);
     words_dict = words_dict.map(function(word) {
@@ -194,7 +193,6 @@ app.post('/find_anagram', async function(req, res) {
     sorted_word_combinations = await combinations(sorted_word);
     if (type && length)
         sorted_word_combinations = sorted_word_combinations.filter(size_check(type, length));
-    console.log('sorted_word_combinations', sorted_word_combinations);
     var search = [];
     if(sorted_word_combinations.length == 1){
         var search_element = await traverse_tree_json(tree_dict, sorted_word_combinations[0]);
