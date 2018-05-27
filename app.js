@@ -28,7 +28,6 @@ async function sort_dict(words_dict) {
     }
     keys = Object.keys(sorted_dict);
     keys.sort();
-    console.log('keys', keys);
     len = keys.length;
     for (i = 0; i < len; i++) {
         k = keys[i];
@@ -37,7 +36,6 @@ async function sort_dict(words_dict) {
         new_sorted_dict[k] = sorted_dict[k]
 
     }
-    console.log('sorted_dict', new_sorted_dict);
     return new_sorted_dict;
 
 }
@@ -92,6 +90,54 @@ async function convert_to_tree(sorted_dict) {
 }
 
 
+async function traverse_tree_json(tree_dict, sorted_word){
+  console.log('iteration',  sorted_word);
+  if(!sorted_word || sorted_word.length==0){
+    return "0";
+  }
+  if(sorted_word.length == 1){
+    console.log('sorted_word', sorted_word, Array.isArray(tree_dict[sorted_word]));
+    if(Array.isArray(tree_dict[sorted_word])){
+            return tree_dict[sorted_word];
+        }
+    else
+        return "0";
+  }
+	for(var i = 0, len = sorted_word.length -1; i<len;  i++){
+		var char = sorted_word[i];
+		console.log('first letter = ', char, sorted_word);
+		for(var key in tree_dict){
+            console.log('tree dick k liyes', key,  "yp", tree_dict[key], key <= char);
+			if(key <= char){
+				if(key == char){
+				sorted_word = sorted_word.slice(1, );
+	      if(Array.isArray(tree_dict[key])){
+	      	return tree_dict[key];
+	      }
+	      else{
+	      	console.log('key', key, tree_dict[key]);
+	      return traverse_tree_json(tree_dict[key], sorted_word);
+
+	      }
+	    }
+	    else{
+	    	console.log('do nothing');
+
+
+	    }
+	  }
+    else{
+    	console.log('cant find');
+    	return "0";
+    	break;
+    }
+    }
+
+	}
+
+}
+
+
 
 
 app.post('/find_anagram', async function(req, res) {
@@ -130,8 +176,10 @@ app.post('/find_anagram', async function(req, res) {
     words_dict = words_dict.sort()
     sorted_dict = await sort_dict(words_dict);
     tree_dict = await convert_to_tree(sorted_dict);
+    var tree_dict = JSON.parse(tree_dict);
     console.log('tree_dict', tree_dict);
-    res.send(tree_dict);
+    var search = await traverse_tree_json(tree_dict, sorted_word);
+    res.send(search);
 });
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
