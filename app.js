@@ -227,7 +227,7 @@ app.post('/find_anagram', async function(req, res) {
         }
 
     }
-    //search = await traverse_tree_json(tree_dict, sorted_word);
+    // so that only one copy remains of the matched srings from dictionary for the final result
     search = search.filter((v, i, a) => a.indexOf(v) === i); 
     console.log('search', search);
     res.send(search);
