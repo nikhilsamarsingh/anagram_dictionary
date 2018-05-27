@@ -30,17 +30,49 @@ async function sort_dict(words_dict){
 
 }
 
+
+
 app.post('/find_anagram', async function (req, res){
 	var word = req.body.word;
 	var length = req.body.length;
 	var type = req.body.type;
-	console.log(req.body);
 	var sorted_word = word.toLowerCase().split("").sort().toString().replace(/,/g , '');
-
 	var words_dict = require('fs').readFileSync('public/demo_test.html').toString().match(/<li>.+<\/li>/gm);
-	var words_dict = words_dict.map(function(word) {
-  return word.replace('<li>' , '').replace('<\/li>' , '').toLowerCase();
+	console.log('words_dict', words_dict);
+	words_dict = words_dict.map(function(word) {
+		if(type){
+			if(type == "e"){
+				var temp = word.replace('<li>' , '').replace('<\/li>' , '').toLowerCase();
+				console.log('temp', word, temp, length);
+				if(temp.length == length){
+					return temp;
+				}
+			}
+			else if(type == "lte"){
+				var temp = word.replace('<li>' , '').replace('<\/li>' , '').toLowerCase();
+				console.log('temp', word, temp, length);
+				if(temp.length <= length){
+					return temp;
+				}
+
+			}
+			else if(type == "lt"){
+				var temp = word.replace('<li>' , '').replace('<\/li>' , '').toLowerCase();
+				console.log('temp', word, temp, length);
+				if(temp.length < length){
+					return temp;
+				}
+
+			}
+		}
+	else{
+		return word.replace('<li>' , '').replace('<\/li>' , '').toLowerCase();
+	}
 	});
+	console.log('words_dict', words_dict);
+	words_dict = words_dict.filter(function( element ) {
+   return element !== undefined;
+});
 	sorted_dict = await sort_dict(words_dict);
 
   console.log("sorted_dict", sorted_dict, "word to search", word, "sorted word", sorted_word);
