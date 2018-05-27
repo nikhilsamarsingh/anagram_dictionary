@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+ function myFunction() {
+   var word = document.getElementById("input_text").value;
+   var length = document.getElementById("input_length").value;
+   console.log('word is', word);
+   $.ajax({
+     type: 'post',
+     data: { 
+        'word': word, 
+        'length': length
+      },
+     url: 'http://127.0.0.1:3000/find_anagram', //node.js server is running
+     success: function(data) {
+       alert("success");
+
+     }
+   });
+ }
+
+
+$(document).ready(function(){
+  $("#div1").load("public/demo_test.html #words li");
+});
+</script>
+  <title></title>
+</head>
+<body>
+<h2>Current Dictionary</h2>
+<div id="div1"></div>
+<form>
+<input type="text" name="input_text" id = "input_text">
+<input type="text" name="input_length" id = "input_length">
+<input type="button" value="search" class="fil_search" onclick="myFunction()"/>
+</form>
+
+</body>
+</html>
