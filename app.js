@@ -59,7 +59,7 @@ function add_child(branch, key, value) {
 }
 
 
-// This function will find whenre to put the next child in the tree_dict, and then we call add_child
+// This function will find whene to put the next child in the tree_dict, and then we call add_child
 function find_place_in_tree_dict(branch, key, value) {
     if (typeof branch !== 'undefined' && branch !== null) {
         add_child(branch, key, value);
