@@ -39,7 +39,9 @@
                 success: function(data) {
                     //var data_json = JSON.parse(data);
                     console.log(data);
-                    
+                    if(data.length == 0){
+                      data = "NO Results Found"
+                    }
                     document.getElementById("div2").innerHTML = data;
 
                 }
