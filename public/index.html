@@ -10,12 +10,18 @@
             var length = document.getElementById("input_length").value;
             var letters = /^[A-Za-z]+$/;
             if(word.match(letters)){
+              console.log('length', length, length.length);
               if (length && !isNaN(length) && length.length != 0) {
                   var type = document.querySelector('input[name="type"]:checked').value;
-              } else {
+              } else if(length.length != 0 && length){
                   alert("length should be a number");
                   type = null;
                   length = null;
+              }
+              else{
+                type = null;
+                length = null;
+
               }
             }
             else{
@@ -52,11 +58,14 @@
     <h2>Current Dictionary</h2>
     <div id="div1"></div>
     <form>
+        Enter Search Term:
         <input type="text" name="input_text" id="input_text">
+        Enter output length
         <input type="text" name="input_length" id="input_length">
+        Choose Type
         <input type="radio" name="type" value="e" checked> equal<br>
         <input type="radio" name="type" value="lte"> less than or equal<br>
-        <input type="radio" name="type" value="lt"> less than
+        <input type="radio" name="type" value="lt"> less than<br>
         <input type="button" value="search" class="fil_search" onclick="myFunction()" />
     </form>
     <div id="div2"></div>
